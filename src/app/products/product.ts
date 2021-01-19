@@ -7,7 +7,7 @@ export interface IProduct{
     description : string;
     starRating : number;
     imageUrl : string;
-
+//comment
 }
 
 export class Product implements IProduct{
