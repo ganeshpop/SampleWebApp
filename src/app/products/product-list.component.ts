@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {IProduct} from './product';
+import { Component, OnInit } from '@angular/core';
+import { IProduct } from './product';
+import { ProductService } from './product.services'
 
 @Component({
-    selector :'pm-products',
     templateUrl: './product-list.component.html',
     styleUrls:['./product-list.component.css']
 })
@@ -12,6 +12,7 @@ export class ProductListComponent implements OnInit{
     imageMargin : number = 2;
     showImage :boolean = false;
     _listFilter : string;
+    errorMessage : string;
     get listFilter():string{
         return this._listFilter;
     }
@@ -21,31 +22,10 @@ export class ProductListComponent implements OnInit{
     }
 
     filteredProducts : IProduct[];
-    products : IProduct[] =[
-        {
-            "productId": 1,
-            "productName": "Leaf Rake",
-            "productCode": "GDN-0011",
-            "releaseDate": "March 19, 2019",
-            "description": "Leaf rake with 48-inch wooden handle.",
-            "price": 19.95,
-            "starRating": 3.5,
-            "imageUrl": "assets/images/leaf_rake.png"
-          },
-          {
-            "productId": 2,
-            "productName": "Garden Cart",
-            "productCode": "GDN-0023",
-            "releaseDate": "March 18, 2019",
-            "description": "15 gallon capacity rolling garden cart",
-            "price": 32.99,
-            "starRating": 4.1,
-            "imageUrl": "assets/images/garden_cart.png"
-          }
-    ];
-    constructor(){
-        this.filteredProducts = this.products;
-        this._listFilter = 'cart';
+    products : IProduct[] =[];
+
+
+    constructor(private productService : ProductService){
     }
     onRatingClicked(message: string) : void{
         this.pageTitle = 'Products List : '+message;
@@ -61,8 +41,15 @@ export class ProductListComponent implements OnInit{
         this.showImage = !this.showImage;
    
     }
-    ngOnInit():void{
-        console.log('In OnInit');
+    ngOnInit(): void {
+        this.productService.getProducts().subscribe({
+          next: products => {
+            this.products = products;
+            this.filteredProducts = this.products;
+          },
+          error: err => this.errorMessage = err
+        });
     }
+
 
 } 
